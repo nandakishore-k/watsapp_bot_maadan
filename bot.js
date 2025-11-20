@@ -10,18 +10,18 @@ const qrTerm = require("qrcode-terminal");
 
 const fs = require("fs");
 
-function startBirthdayScheduler(sock) {
+async function startBirthdayScheduler(sock) {
   console.log("🎂 Birthday scheduler started...");
 
-  setInterval(async () => {
-    const birthdays = JSON.parse(fs.readFileSync("./birthdays.json"));
+  
+  const birthdays = JSON.parse(fs.readFileSync("./birthdays.json"));
 
   const today = new Date().toISOString().slice(5, 10); // MM-DD
 
   for (const groupId in birthdays) {
     for (const person of birthdays[groupId]) {
-      if (person.date.slice(5, 10) === today) {
-        const msg = `🎉 Happy Birthday *${person.name}*! 🎂🎁  
+      if (person.date === today) {
+        const msg = `🎉 Happy Birthday *${person.name}*! 🎂🎁
         Wishing you a year full of success and happiness! ❤️`;
 
         await sock.sendMessage(groupId, { text: msg });
@@ -30,7 +30,6 @@ function startBirthdayScheduler(sock) {
     }
   }
 
-  }, 60 * 100); 
 }
 
 
